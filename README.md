@@ -1,5 +1,45 @@
 # HealthReserve
 
+HealthReserve is a modern healthcare marketplace that helps patients find and book trusted doctors in Karachi and other cities. The project includes patient and provider portals, appointment booking (video & in-clinic), medical records management, and a modular UI for doctor discovery.
+
+Live site: https://healthreserve01.web.app/
+
+Key features implemented in this branch:
+- Search-first public homepage with hero slider and visible pricing
+- Specialty rails, condition shortcuts, and curated service cards
+- Improved doctor cards with trust badges, ratings, and clear fees
+- Email sign-in, Google sign-in (forced account chooser), and forgot-password flow
+- Inline SVG illustrations to avoid blocked external images
+- SEO meta tags and Open Graph metadata
+
+Quick start
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Run dev server:
+   ```bash
+   npm run dev
+   ```
+3. Build for production:
+   ```bash
+   npm run build
+   ```
+
+Notes
+- This branch contains UI/UX improvements focused on the public landing and patient discovery flows.
+- The Firebase project is configured for `healthreserve01` hosting (see firebase.json). Do not publish secrets; set environment variables as needed.
+
+Screenshots
+- Live homepage (deployed): https://healthreserve01.web.app/
+
+Contributing
+- I created a branch `healthreserve/ui-landing-updates` with all UI improvements. If you want the updates merged into `main`, open a PR on GitHub and review conflicts.
+
+---
+Generated and updated by the HealthReserve development assistant.
+# HealthReserve
+
 Modern telemedicine web app for patients, doctors, and admins.
 
 ## Live App
