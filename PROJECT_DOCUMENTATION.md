@@ -1,19 +1,6 @@
 # HealthReserve - Project Documentation
 
-## Project Overview
-HealthReserve is a modern healthcare platform connecting patients with verified doctors for online consultations, in-clinic appointments, lab tests, and medicines delivery across Pakistan.
-
-**Live Site:** https://healthreserve01.web.app/
-
----
-
-## Technology Stack
-
-### Frontend
-- **Framework:** React 18 + TypeScript
-- **Build Tool:** Vite 6.4.2
 - **Styling:** Tailwind CSS with dark mode support
-- **Animations:** Framer Motion
 - **UI Icons:** Lucide React
 - **Routing:** React Router v6
 
@@ -21,33 +8,12 @@ HealthReserve is a modern healthcare platform connecting patients with verified 
 - **Database:** Firebase Firestore
 - **Authentication:** Firebase Auth (Email/Password, Google OAuth, Phone with Recaptcha)
 - **Hosting:** Firebase Hosting (healthreserve01 project)
-- **Cloud Functions:** Firebase Functions (Node.js)
-- **Push Notifications:** Firebase Cloud Messaging (FCM)
-
-### Key Features
-- Patient & Doctor authentication
-- Doctor discovery with filtering (specialty, fee range, rating)
-- Real-time appointment booking
-- Video consultations (integration ready)
-- Prescription builder
-- Patient medical records
 - Notification system (email, push, in-app)
 - Doctor portfolio and profile management
-- Patient dashboard with appointment history
-- Admin dashboard for moderation
-- SEO optimized landing page
-
 ---
 
 ## Project Structure
-
-```
-healthreserve/
-├── src/
-│   ├── components/          # React components
-│   │   ├── AdminDashboard.tsx
 │   │   ├── PatientDashboard.tsx
-│   │   ├── DoctorDashboard.tsx
 │   │   ├── DoctorCard.tsx
 │   │   ├── Header.tsx
 │   │   ├── Sidebar.tsx
