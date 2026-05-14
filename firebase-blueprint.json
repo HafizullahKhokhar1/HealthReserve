@@ -1,0 +1,86 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Base user account information.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Full name of the user." },
+        "email": { "type": "string", "format": "email", "description": "Email address." },
+        "role": { "type": "string", "enum": ["patient", "doctor", "admin"], "description": "Role of the user in the system." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Account creation timestamp." }
+      },
+      "required": ["name", "email", "role", "createdAt"]
+    },
+    "DoctorProfile": {
+      "title": "Doctor Profile",
+      "description": "Detailed information for healthcare providers.",
+      "type": "object",
+      "properties": {
+        "specialization": { "type": "string", "description": "Medical specialty (e.g., Cardiology)." },
+        "bio": { "type": "string", "description": "Professional biography." },
+        "fees": { "type": "number", "description": "Consultation fee amount." },
+        "hospitals": { 
+          "type": "array", 
+          "items": { "type": "string" },
+          "description": "List of hospital names or IDs where the doctor practices." 
+        },
+        "availability": {
+          "type": "object",
+          "description": "Working days and hours.",
+          "properties": {
+            "days": { "type": "array", "items": { "type": "string" } },
+            "slots": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["specialization", "fees", "hospitals"]
+    },
+    "Hospital": {
+      "title": "Hospital",
+      "description": "Medical facility information.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "location": { "type": "string" },
+        "address": { "type": "string" }
+      },
+      "required": ["name", "location"]
+    },
+    "Appointment": {
+      "title": "Appointment",
+      "description": "Details of a booked medical consultation.",
+      "type": "object",
+      "properties": {
+        "patientId": { "type": "string" },
+        "doctorId": { "type": "string" },
+        "hospitalId": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "time": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "cancelled", "completed"] },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["patientId", "doctorId", "hospitalId", "date", "time", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Root collection for user accounts."
+    },
+    "/doctorProfiles/{userId}": {
+      "schema": "DoctorProfile",
+      "description": "Detailed profiles linked to doctor users."
+    },
+    "/hospitals/{hospitalId}": {
+      "schema": "Hospital",
+      "description": "Collection of medical facilities."
+    },
+    "/appointments/{appointmentId}": {
+      "schema": "Appointment",
+      "description": "Collection of all appointment bookings."
+    }
+  }
+}

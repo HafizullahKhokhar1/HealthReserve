@@ -1,0 +1,122 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && getUserRole() == 'admin';
+    }
+
+    match /test/connection {
+      allow read: if true;
+    }
+
+    match /users/{userId} {
+      function isValidUser(data) {
+        return data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+               data.email is string && data.email.size() > 0 &&
+               data.role in ['patient', 'doctor', 'admin'] &&
+               data.createdAt is timestamp;
+      }
+
+      allow read: if isSignedIn();
+      allow create: if isOwner(userId) && isValidUser(request.resource.data) && request.resource.data.role != 'admin';
+      allow update: if isOwner(userId) && isValidUser(request.resource.data) &&
+                    request.resource.data.role == resource.data.role &&
+                    request.resource.data.email == resource.data.email;
+    }
+
+    match /doctorProfiles/{userId} {
+      function isValidDoctor(data) {
+        return data.specialization is string && data.specialization.size() > 0 &&
+               data.fees is number && data.fees >= 0 &&
+               data.hospitals is list &&
+               (data.availability is map || data.availabilities is list || !('availability' in data));
+      }
+
+      allow read: if true;
+      allow write: if isOwner(userId) && isValidDoctor(request.resource.data);
+    }
+
+    match /doctorAvailabilities/{availabilityId} {
+      function isValidAvailability(data) {
+        return data.doctorId is string &&
+               ((data.day is string && data.day.size() > 0) || data.days is list) &&
+               data.startTime is string && data.startTime.size() > 0 &&
+               data.endTime is string && data.endTime.size() > 0 &&
+               data.location is string &&
+               data.hospitalName is string &&
+               data.checkupFee is number;
+      }
+
+      allow read: if true;
+      allow write: if isSignedIn() && request.resource.data.doctorId == request.auth.uid && isValidAvailability(request.resource.data);
+    }
+
+    match /reviews/{reviewId} {
+      function isValidReview(data) {
+        return data.doctorId is string &&
+               data.patientId is string &&
+               data.patientName is string &&
+               data.appointmentId is string &&
+               data.rating is number &&
+               data.rating >= 1 && data.rating <= 5 &&
+               data.comment is string &&
+               data.createdAt is timestamp;
+      }
+
+      allow read: if true;
+      allow create: if isSignedIn() && request.resource.data.patientId == request.auth.uid && isValidReview(request.resource.data);
+      allow update, delete: if isAdmin() || (isSignedIn() && resource.data.patientId == request.auth.uid);
+    }
+
+    match /hospitals/{hospitalId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Public doctors collection for patient dashboard
+    match /doctors/{doctorId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /appointments/{appointmentId} {
+      function isValidAppointment(data) {
+        return data.patientId == request.auth.uid &&
+               data.doctorId is string &&
+               data.hospitalId is string &&
+               data.date is string &&
+               data.time is string &&
+               data.status in ['pending', 'confirmed', 'cancelled', 'completed'] &&
+               data.createdAt == request.time;
+      }
+
+      allow create: if isSignedIn() && isValidAppointment(request.resource.data);
+      allow read: if isSignedIn() && (
+        resource.data.patientId == request.auth.uid ||
+        resource.data.doctorId == request.auth.uid ||
+        isAdmin()
+      );
+      allow update: if isSignedIn() && (
+        (resource.data.patientId == request.auth.uid &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']) &&
+         request.resource.data.status == 'cancelled') ||
+        (resource.data.doctorId == request.auth.uid &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']) &&
+         request.resource.data.status in ['confirmed', 'completed', 'cancelled']) ||
+        isAdmin()
+      );
+    }
+  }
+}
