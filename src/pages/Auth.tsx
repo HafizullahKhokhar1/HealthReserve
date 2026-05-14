@@ -187,6 +187,23 @@ const conditionCards = [
 
 export function LandingPage() {
   const navigate = useNavigate();
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Doctor slider data
+  const doctorSlides = [
+    { name: 'Dr. Ayesha Khan', specialty: 'Dermatologist', rating: '4.9', patients: '2.3K' },
+    { name: 'Dr. Hassan Ali', specialty: 'General Physician', rating: '4.8', patients: '1.8K' },
+    { name: 'Dr. Fatima Malik', specialty: 'Gynecologist', rating: '4.95', patients: '3.1K' },
+    { name: 'Dr. Ahmed Hussain', specialty: 'Cardiologist', rating: '4.9', patients: '2.5K' },
+  ];
+
+  // Auto-rotate slider every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % doctorSlides.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="min-h-screen overflow-hidden bg-slate-50 transition-colors duration-500 dark:bg-slate-950">
@@ -257,44 +274,128 @@ export function LandingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.12 }}
-              className="rounded-[32px] border border-slate-200 bg-white p-4 shadow-[0_30px_80px_rgba(15,23,42,0.08)] dark:border-slate-800 dark:bg-slate-900"
+              className="relative overflow-hidden rounded-[32px] bg-gradient-to-r from-slate-700 via-slate-600 to-slate-800 p-8 md:p-10 shadow-[0_30px_80px_rgba(15,23,42,0.15)]"
             >
-              <div className="grid gap-3 lg:grid-cols-[1fr_1.1fr_auto]">
-                <div className="flex items-center gap-3 rounded-2xl bg-slate-50 px-4 py-4 dark:bg-slate-800">
-                  <MapPin className="text-blue-600" size={18} />
-                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">Location</p>
-                    <p className="text-sm font-bold text-slate-900 dark:text-slate-100">Karachi</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-4 focus-within:border-blue-400 dark:border-slate-700 dark:bg-slate-800">
-                  <Search className="text-slate-400" size={18} />
-                  <input
-                    placeholder="Doctors, hospitals, conditions"
-                    className="w-full bg-transparent text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400 dark:text-slate-100"
-                  />
-                </div>
-
-                <Button size="lg" className="min-w-44 justify-center rounded-2xl" icon={Search} onClick={() => navigate('/login?role=patient')}>
-                  Search doctors
-                </Button>
-              </div>
-
-              <div className="mt-4 flex flex-wrap gap-2">
-                {['Dermatologist', 'Gynecologist', 'ENT', 'Dentist', 'General Physician'].map(item => (
-                  <button
-                    key={item}
-                    onClick={() => navigate('/login?role=patient')}
-                    className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.28em] text-slate-500 transition hover:border-blue-300 hover:text-blue-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+              <div className="relative z-10 grid gap-8 md:grid-cols-[1.3fr_1fr] md:items-center">
+                {/* Left Side - Search & Info */}
+                <div className="space-y-6">
+                  {/* Stats Badge */}
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="inline-flex items-center gap-2 rounded-full bg-green-600/20 px-4 py-2 border border-green-500/30"
                   >
-                    {item}
-                  </button>
-                ))}
+                    <div className="w-2 h-2 bg-green-500 rounded-full" />
+                    <p className="text-sm font-bold text-green-100">9M+ tele-consultations</p>
+                  </motion.div>
+
+                  {/* Main Heading */}
+                  <div className="space-y-3">
+                    <motion.h2
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.35 }}
+                      className="text-3xl md:text-4xl font-black text-white leading-tight"
+                    >
+                      Find and Book the
+                      <br />
+                      <span className="text-yellow-400">Best Doctors</span> near you
+                    </motion.h2>
+                  </div>
+
+                  {/* Search Section */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="space-y-4"
+                  >
+                    {/* Location Selector */}
+                    <div className="flex items-center gap-3 rounded-2xl bg-white/10 backdrop-blur px-4 py-3 border border-white/20">
+                      <MapPin className="text-red-400" size={20} />
+                      <select className="bg-transparent text-white font-bold outline-none cursor-pointer flex-1 text-sm" defaultValue="Karachi">
+                        <option value="Karachi" className="bg-slate-900">Karachi</option>
+                        <option value="Islamabad" className="bg-slate-900">Islamabad</option>
+                        <option value="Lahore" className="bg-slate-900">Lahore</option>
+                        <option value="Rawalpindi" className="bg-slate-900">Rawalpindi</option>
+                      </select>
+                    </div>
+
+                    {/* Search Input */}
+                    <div className="flex items-center gap-3 rounded-2xl bg-white px-5 py-4 focus-within:ring-2 focus-within:ring-yellow-400 transition">
+                      <Search className="text-slate-400" size={20} />
+                      <input
+                        placeholder="Doctors, Hospital, Conditions"
+                        className="w-full bg-transparent text-base font-medium text-slate-900 outline-none placeholder:text-slate-400"
+                      />
+                    </div>
+
+                    {/* Search Button */}
+                    <Button
+                      size="lg"
+                      className="w-full md:w-auto bg-yellow-400 text-slate-900 hover:bg-yellow-500 font-black text-base rounded-2xl justify-center"
+                      onClick={() => navigate('/login?role=patient')}
+                    >
+                      Search
+                    </Button>
+                  </motion.div>
+                </div>
+
+                {/* Right Side - Doctor Photo Slider */}
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="relative h-80 md:h-96 rounded-3xl overflow-hidden"
+                >
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={currentSlide}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.8 }}
+                      className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-blue-400 to-purple-600 p-6"
+                    >
+                      {/* Doctor Avatar Placeholder */}
+                      <div className="flex items-center justify-center w-40 h-40 bg-white/20 rounded-2xl backdrop-blur border border-white/30 mb-6">
+                        <User size={64} className="text-white opacity-50" />
+                      </div>
+                      
+                      {/* Stats Below Photo */}
+                      <div className="text-center text-white">
+                        <p className="text-lg font-bold mb-2">{doctorSlides[currentSlide].name}</p>
+                        <div className="space-y-2">
+                          <p className="text-sm flex items-center justify-center gap-2">
+                            <Star size={16} className="fill-yellow-300 text-yellow-300" />
+                            {doctorSlides[currentSlide].rating} | {doctorSlides[currentSlide].patients} patients
+                          </p>
+                          <p className="text-xs text-white/80">{doctorSlides[currentSlide].specialty}</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+
+                  {/* Slider Dots */}
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex gap-2">
+                    {doctorSlides.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentSlide(index)}
+                        className={`h-2 rounded-full transition ${index === currentSlide ? 'bg-yellow-400 w-8' : 'bg-white/40 w-2'}`}
+                      />
+                    ))}
+                  </div>
+                </motion.div>
               </div>
+
+              {/* Background Decorative Elements */}
+              <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
+              <div className="absolute bottom-0 left-0 w-72 h-72 bg-yellow-400/5 rounded-full blur-3xl" />
             </motion.div>
 
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="mt-8 grid gap-3 sm:grid-cols-3">
               <div className="rounded-3xl border border-white/70 bg-white/90 p-5 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-900/80">
                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Doctors</p>
                 <p className="mt-3 text-3xl font-black text-slate-900 dark:text-slate-100">25K+</p>

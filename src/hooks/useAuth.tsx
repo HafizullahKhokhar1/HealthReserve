@@ -1,13 +1,23 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { onAuthStateChanged, User as FirebaseUser, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { auth, db, signInWithGoogle } from '../lib/firebase';
+import {
+  auth,
+  db,
+  signInWithGoogle,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+} from '../lib/firebase';
 import { User, UserRole } from '../types';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   signIn: (role: UserRole) => Promise<void>;
+  signUpWithEmailAuth: (fullName: string, email: string, password: string, role: UserRole) => Promise<void>;
+  signInWithEmailAuth: (email: string, password: string, role: UserRole) => Promise<void>;
+  sendPasswordReset: (email: string) => Promise<void>;
   signInWithPhone: (firebaseUser: FirebaseUser, role: UserRole) => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -116,6 +126,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const signUpWithEmailAuth = async (fullName: string, email: string, password: string, role: UserRole) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const firebaseUser = userCredential.user;
+      
+      // Create user document with additional info
+      const userRef = doc(db, 'users', firebaseUser.uid);
+      const newUser: Omit<User, 'uid'> = {
+        name: fullName,
+        email: email,
+        phoneNumber: '',
+        role,
+        createdAt: serverTimestamp(),
+      };
+      await setDoc(userRef, newUser);
+      
+      const userData = { uid: firebaseUser.uid, ...newUser } as User;
+      setUser(userData);
+      cacheUser(userData);
+    } catch (error) {
+      console.error('Sign up error:', error);
+      throw error;
+    }
+  };
+
+  const signInWithEmailAuth = async (email: string, password: string, role: UserRole) => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const firebaseUser = userCredential.user;
+      await syncUser(firebaseUser, role);
+    } catch (error) {
+      console.error('Email sign in error:', error);
+      throw error;
+    }
+  };
+
+  const sendPasswordReset = async (email: string) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (error) {
+      console.error('Password reset error:', error);
+      throw error;
+    }
+  };
+
   const signInWithPhone = async (firebaseUser: FirebaseUser, role: UserRole) => {
     try {
       await syncUser(firebaseUser, role);
@@ -132,7 +187,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signInWithPhone, signOut: signOutUser }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signUpWithEmailAuth, signInWithEmailAuth, sendPasswordReset, signInWithPhone, signOut: signOutUser }}>
       {children}
     </AuthContext.Provider>
   );
