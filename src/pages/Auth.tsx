@@ -139,8 +139,7 @@ function HeroSlider({ slides, interval = 4500 }: { slides: string[]; interval?: 
           />
         ))}
       </div>
-
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent" />
+      
     </div>
   );
 }
@@ -191,10 +190,34 @@ export function LandingPage() {
 
   // Doctor slider data
   const doctorSlides = [
-    { name: 'Dr. Ayesha Khan', specialty: 'Dermatologist', rating: '4.9', patients: '2.3K' },
-    { name: 'Dr. Hassan Ali', specialty: 'General Physician', rating: '4.8', patients: '1.8K' },
-    { name: 'Dr. Fatima Malik', specialty: 'Gynecologist', rating: '4.95', patients: '3.1K' },
-    { name: 'Dr. Ahmed Hussain', specialty: 'Cardiologist', rating: '4.9', patients: '2.5K' },
+    {
+      name: 'Dr. Ayesha Khan',
+      specialty: 'Dermatologist',
+      rating: '4.9',
+      patients: '2.3K',
+      image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&q=80&auto=format&fit=crop',
+    },
+    {
+      name: 'Dr. Hassan Ali',
+      specialty: 'General Physician',
+      rating: '4.8',
+      patients: '1.8K',
+      image: 'https://images.unsplash.com/photo-1551601651-0b6f8f5b4c63?w=800&q=80&auto=format&fit=crop',
+    },
+    {
+      name: 'Dr. Fatima Malik',
+      specialty: 'Gynecologist',
+      rating: '4.95',
+      patients: '3.1K',
+      image: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=800&q=80&auto=format&fit=crop',
+    },
+    {
+      name: 'Dr. Ahmed Hussain',
+      specialty: 'Cardiologist',
+      rating: '4.9',
+      patients: '2.5K',
+      image: 'https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=800&q=80&auto=format&fit=crop',
+    },
   ];
 
   // Auto-rotate slider every 5 seconds
@@ -313,7 +336,7 @@ export function LandingPage() {
                   >
                     {/* Location Selector */}
                     <div className="flex items-center gap-3 rounded-2xl bg-white/10 backdrop-blur px-4 py-3 border border-white/20">
-                      <MapPin className="text-red-400" size={20} />
+                      <img src="https://healthicons.org/icons/svg/outline/places/map-pin.svg" alt="Location" className="h-5 w-5" />
                       <select className="bg-transparent text-white font-bold outline-none cursor-pointer flex-1 text-sm" defaultValue="Karachi">
                         <option value="Karachi" className="bg-slate-900">Karachi</option>
                         <option value="Islamabad" className="bg-slate-900">Islamabad</option>
@@ -324,7 +347,7 @@ export function LandingPage() {
 
                     {/* Search Input */}
                     <div className="flex items-center gap-3 rounded-2xl bg-white px-5 py-4 focus-within:ring-2 focus-within:ring-yellow-400 transition">
-                      <Search className="text-slate-400" size={20} />
+                      <img src="https://healthicons.org/icons/svg/outline/symbols/search.svg" alt="Search" className="h-5 w-5 text-slate-400" />
                       <input
                         placeholder="Doctors, Hospital, Conditions"
                         className="w-full bg-transparent text-base font-medium text-slate-900 outline-none placeholder:text-slate-400"
@@ -359,9 +382,9 @@ export function LandingPage() {
                       className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-blue-400 to-purple-600 p-6"
                     >
                       {/* Doctor Avatar Placeholder */}
-                      <div className="flex items-center justify-center w-40 h-40 bg-white/20 rounded-2xl backdrop-blur border border-white/30 mb-6">
-                        <User size={64} className="text-white opacity-50" />
-                      </div>
+                          <div className="flex items-center justify-center w-40 h-40 bg-white/10 rounded-2xl overflow-hidden border border-white/20 mb-6">
+                            <img src={doctorSlides[currentSlide].image} alt={doctorSlides[currentSlide].name} className="w-full h-full object-cover" />
+                          </div>
                       
                       {/* Stats Below Photo */}
                       <div className="text-center text-white">
@@ -415,7 +438,7 @@ export function LandingPage() {
             <div className="overflow-hidden rounded-[36px] border border-slate-200 bg-white shadow-[0_20px_80px_rgba(15,23,42,0.12)] dark:border-slate-800 dark:bg-slate-900">
               <div className="relative h-[420px]">
                 <HeroSlider slides={heroSlides} />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent" />
+                
                 <div className="absolute inset-x-0 bottom-0 p-6 text-white">
                   <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.3em] backdrop-blur">
                     <Star className="fill-current" size={12} />
